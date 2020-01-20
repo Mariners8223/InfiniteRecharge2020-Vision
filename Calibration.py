@@ -13,6 +13,8 @@ def onClick(event, x, y, flags, param):
         global rgb, rgbOn
         rgb = np.zeros(rgbSize, np.uint8)
         rgbOn = img[y, x][::-1]
+        #hsvOn = cv2.cvtColor(rgbOn, cv2.COLOR_RGB2HSV)
+        #print(hsvOn)
         cv2.putText(rgb, str(rgbOn), (0, 40), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 255))
 
 
@@ -44,6 +46,10 @@ def Save(x):
         data["min"] = np.array(data["min"])
         data["max"] = np.array(data["max"])
 
+        '''for i in range(1000):
+            _, frame = cap.read()
+            cv2.imwrite(f"imgs\\Tower{i}.png", frame)'''
+
 
 def nothing(x): pass
 
@@ -60,7 +66,7 @@ cv2.namedWindow("save")
 
 # rgb
 img = cv2.imread('Tester2.jpg')
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(1)
 cap.set(15, -10)
 
 rgb = np.zeros(rgbSize, np.uint8)
@@ -108,10 +114,14 @@ cv2.setTrackbarPos("Blur", "Bars", 27)
 
 
 def main():
+    i = 1
     while 1:
         # get img
         global img
-        _, img = cap.read()
+        #  _, img = cap.read()
+        img = cv2.imread(f"imgs\\Tower{i+147}.png")
+        i += 1
+        i = (i) % (1000-147)
         # getting information from trackers
         data["min"] = np.array([cv2.getTrackbarPos("MinR", "Bars"), cv2.getTrackbarPos("MinG", "Bars"),
                                 cv2.getTrackbarPos("MinB", "Bars")])
