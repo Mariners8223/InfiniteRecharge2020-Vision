@@ -64,7 +64,7 @@ cv2.namedWindow("save")
 cv2.namedWindow("Angle")
 
 # img = cv2.imread('Tester2.jpg')
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(1)
 cap.set(15, -10)
 
 hsv = np.zeros(hsvSize, np.uint8)
@@ -125,9 +125,9 @@ def main():
     while 1:
         # get img
         global img
-        # _, img = cap.read()
+        _, img = cap.read()
 
-        img = cv2.imread(f"imgs\\Tower{i+147}.png")
+        #img = cv2.imread(f"imgs\\Tower{i+147}.png")
         i += 1
         i = (i) % (1000-147)
         # getting information from trackers
