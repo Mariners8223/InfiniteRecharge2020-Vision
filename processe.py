@@ -84,7 +84,6 @@ def distance_angle_frame(img, min_color, max_color, blur_val, object_area):
             cv2.putText(frame_hsv, f"distance = {None}", (10, 400), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255),
                         1)
             cv2.putText(frame_hsv, f"angle = {None}", (10, 450), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1)
-            print("1111")
             return None, None, frame_hsv
         Dz = math.sqrt(Dz)
 
@@ -92,7 +91,6 @@ def distance_angle_frame(img, min_color, max_color, blur_val, object_area):
 
         cv2.putText(frame_hsv, f"distance = {D}", (10, 430), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1)
         cv2.putText(frame_hsv, f"angle = {angle}", (10, 450), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1)
-        print("2222")
         return D, angle, frame_hsv
     return None, None, frame_hsv
 
@@ -188,7 +186,60 @@ def velocity(r, y0):
         l2 = np.sqrt(9.81 * (r + 0.74) * (r + 0.74) / (y0 + r - 1.684))
         upper = min(u1, u2)
         lower = max(l1, l2)
-    return (upper + lower) / 2
+        return (upper + lower) / 2
+    return None
+
+
+def get_vision_data(img, min_color, max_color, blur_val, object_area):
+    # convert image to hsv
+    frame_hsv = cv2.cvtColor(img, cv2.COLOR_RGB2HSV)
+    # threshold
+    frame_hsv = cv2.inRange(frame_hsv, min_color, max_color)
+    # blur
+    frame_hsv = cv2.medianBlur(frame_hsv, blur_val)
+
+    height, width = frame_hsv.shape
+
+    # find objects
+    contours, _ = cv2.findContours(frame_hsv, 1, 2)
+
+    # find the object in rectangles and apply formulas
+    frame_hsv = cv2.cvtColor(frame_hsv, cv2.COLOR_GRAY2RGB)
+
+    if contours:
+        # selects the largest area
+        best = [0, 0]
+        for i in range(len(contours)):
+            # gets the smallest rectangle that block the contour
+            rect = cv2.minAreaRect(contours[i])
+            # convert to box object
+            box = cv2.boxPoints(rect)
+            box = np.int0(box)
+            # area of the rectangle and save the largest
+            area = d(box[0], box[1]) * d(box[0], box[3])
+            if abs(area) > best[0]:
+                best = [area, box]
+        print(contours)
+        box = best[1]
+        area = best[0]
+        if area == 0:
+            return None, None, frame_hsv
+        cv2.drawContours(frame_hsv, [box], -1, (0, 0, 255), 2)
+
+        D = constants.FOCAL_LENGTH * math.sqrt(object_area / area)
+
+        pixel_middle = (box[0] + box[2]) / 2
+
+        C = (pixel_middle[0] / (width / 2)) - 1
+
+        cv2.putText(frame_hsv, f"center = {C}", (10, 450), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1)
+        cv2.putText(frame_hsv, f"distance = {D}", (10, 430), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1)
+
+        return C, D, frame_hsv
+
+    cv2.putText(frame_hsv, f"center = {None}", (10, 450), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1)
+    cv2.putText(frame_hsv, f"distance = {None}", (10, 430), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1)
+    return None, None, frame_hsv
 
 
 def main():
@@ -199,9 +250,8 @@ def main():
     min_hsv = np.array(data["min"])
     max_hsv = np.array(data["max"])
     rotation = get_rotation_matrix(np.array(data["rotation"]))
-    print(velocity(3, 0.7))
     # camera configuration
-    cap = cv2.VideoCapture(1)
+    cap = cv2.VideoCapture(0)
     cap.set(15, light)
     i = 0
     while True:
@@ -212,14 +262,14 @@ def main():
         cv2.imshow("original", frame)
 
         # get the distance, angle and the edited frame
-        try:
-            D, angle, frame_edited_D_A = distance_angle_frame(frame, min_hsv, max_hsv, blur, constants.STICKER_AREA)
-            center, frame_edited_C = get_center(frame, min_hsv, max_hsv, blur)
-            # show the original and edited images
-            cv2.imshow("processed", frame_edited_D_A)
-            cv2.imshow("processed center", frame_edited_C)
-        except:
-            print("bad")
+        #try:
+        D, angle, frame_edited_D_A = distance_angle_frame(frame, min_hsv, max_hsv, blur, constants.STICKER_AREA)
+        center, frame_edited_C = get_center(frame, min_hsv, max_hsv, blur)
+        # show the original and edited images
+        cv2.imshow("processed", frame_edited_D_A)
+        cv2.imshow("processed center", frame_edited_C)
+        #except:
+        #    print("bad")
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
         i += 1

@@ -3,6 +3,7 @@ import cv2
 import json
 import numpy as np
 from networktables import NetworkTables
+import constants
 
 
 def main():
@@ -19,16 +20,20 @@ def main():
     rotation = processe.get_rotation_matrix(np.array(data["rotation"]))
 
     # camera configuration
-    cap = cv2.VideoCapture(0)
+    cap = cv2.VideoCapture(1)
     cap.set(15, light)
 
-    while 69:
+    while True:
         _, frame = cap.read()
         frame = processe.get_image(frame, rotation)
-        angle, processed = processe.get_center(frame, min_hsv, max_hsv, blur)
+        angle, distance, processed = processe.get_vision_data(frame, min_hsv, max_hsv, blur, constants.STICKER_AREA)
         cv2.imshow("before", frame)
         cv2.imshow("after", processed)
-        if a is not None:
+        if distance is not None:
+            velocity = processe.velocity(distance, 0.6)
+            if velocity is not None:
+                sd.putNumber('vel', float(velocity))
+        if angle is not None:
             sd.putNumber('ang', float(angle))
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
