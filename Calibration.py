@@ -64,7 +64,7 @@ cv2.namedWindow("save")
 cv2.namedWindow("Angle")
 
 # img = cv2.imread('Tester2.jpg')
-cap = cv2.VideoCapture(1)
+cap = cv2.VideoCapture(0)
 cap.set(15, -10)
 
 hsv = np.zeros(hsvSize, np.uint8)
