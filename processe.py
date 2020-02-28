@@ -174,7 +174,7 @@ def get_image(frame, rotation):
     :param rotation: rotation matrix
     :return: rotated image
     """
-    frame = cv2.warpPerspective(frame, rotation, (640, 480))
+    frame = cv2.warpPerspective(frame, rotation, (constants.WIDTH, constants.HEIGHT))
     return frame
 
 
@@ -232,13 +232,13 @@ def get_vision_data(img, min_color, max_color, blur_val, object_area):
 
         C = (pixel_middle[0] / (width / 2)) - 1
 
-        cv2.putText(frame_hsv, f"center = {C}", (10, 450), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1)
-        cv2.putText(frame_hsv, f"distance = {D}", (10, 430), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1)
+        cv2.putText(frame_hsv, f"center = {C}", (10, 210), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1)
+        cv2.putText(frame_hsv, f"distance = {D}", (10, 230), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1)
 
         return C, D, frame_hsv
 
-    cv2.putText(frame_hsv, f"center = {None}", (10, 450), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1)
-    cv2.putText(frame_hsv, f"distance = {None}", (10, 430), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1)
+    cv2.putText(frame_hsv, f"center = {None}", (10, 210), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1)
+    cv2.putText(frame_hsv, f"distance = {None}", (10, 230), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1)
     return None, None, frame_hsv
 
 
@@ -253,14 +253,15 @@ def main():
     # camera configuration
     cap = cv2.VideoCapture(0)
     cap.set(15, light)
+    cap.set(cv2.CAP_PROP_FRAME_WIDTH, constants.WIDTH)
+    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, constants.HEIGHT)
     i = 0
     while True:
         # reads the frame from the camera
         # frame = cv2.imread(f"images/img {i}.png")
         _, frame = cap.read()
-        frame = get_image(frame, rotation)
+        # frame = get_image(frame, rotation)
         cv2.imshow("original", frame)
-
         # get the distance, angle and the edited frame
         #try:
         D, angle, frame_edited_D_A = distance_angle_frame(frame, min_hsv, max_hsv, blur, constants.STICKER_AREA)

@@ -4,12 +4,14 @@ import json
 import numpy as np
 from networktables import NetworkTables
 import constants
+import serial
 
 
 def main():
     # As a client to connect to a robot
-    NetworkTables.initialize(server='10.82.23.2')
-    sd = NetworkTables.getTable('SmartDashboard')
+    ser = serial.Serial('/dev/ttyS0', 9600, timeout=1)
+    # NetworkTables.initialize(server='10.82.23.2')
+    # sd = NetworkTables.getTable('SmartDashboard')
 
     # load vision data
     data = processe.newest_save()
@@ -20,8 +22,10 @@ def main():
     rotation = processe.get_rotation_matrix(np.array(data["rotation"]))
 
     # camera configuration
-    cap = cv2.VideoCapture(1)
+    cap = cv2.VideoCapture(0)
     cap.set(15, light)
+    cap.set(cv2.CAP_PROP_FRAME_WIDTH, constants.WIDTH)
+    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, constants.HEIGHT)
 
     while True:
         _, frame = cap.read()
@@ -29,12 +33,18 @@ def main():
         angle, distance, processed = processe.get_vision_data(frame, min_hsv, max_hsv, blur, constants.STICKER_AREA)
         cv2.imshow("before", frame)
         cv2.imshow("after", processed)
-        if distance is not None:
+        '''if distance is not None:
             velocity = processe.velocity(distance, 0.6)
             if velocity is not None:
                 sd.putNumber('vel', float(velocity))
+            else:
+                sd.putNumber('vel', 0)
+        else:
+            sd.putNumber('vel', 0)'''
         if angle is not None:
-            sd.putNumber('ang', float(angle))
+            ser.write(str(angle))
+        else:
+            ser.write(str(0))
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
 

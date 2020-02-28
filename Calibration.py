@@ -3,7 +3,7 @@ import os
 import string
 from datetime import datetime
 import cv2
-from processe import get_center, get_image, get_rotation_matrix, newest_save
+from processe import get_center, get_image, get_rotation_matrix, newest_save, get_vision_data
 import constants
 import numpy as np
 
@@ -53,7 +53,7 @@ def nothing(x): pass
 
 
 # declaration of windows and constants
-Resize = (640, 480)
+Resize = (constants.WIDTH, constants.HEIGHT)
 hsvSize = (60, 640, 3)
 cv2.namedWindow("Bars")
 cv2.namedWindow("original")
@@ -64,8 +64,11 @@ cv2.namedWindow("save")
 cv2.namedWindow("Angle")
 
 # img = cv2.imread('Tester2.jpg')
-cap = cv2.VideoCapture(1)
+cap = cv2.VideoCapture(0)
 cap.set(15, -10)
+cap.set(cv2.CAP_PROP_FRAME_WIDTH, constants.WIDTH)
+cap.set(cv2.CAP_PROP_FRAME_HEIGHT, constants.HEIGHT)
+
 
 hsv = np.zeros(hsvSize, np.uint8)
 cv2.setMouseCallback("original", onClick)
@@ -152,7 +155,7 @@ def main():
             data["blur"] = 3
             cv2.setTrackbarPos("Blur", "Bars", data["blur"])
 
-        angle, frame_edited = get_center(imgR, data["min"], data["max"], data["blur"])
+        a, d, frame_edited = get_vision_data(imgR, data["min"], data["max"], data["blur"], constants.STICKER_AREA)
 
         # show the original, edited, hsv and bars
         cv2.imshow("original", imgR)
