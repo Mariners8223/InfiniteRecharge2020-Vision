@@ -26,7 +26,7 @@ def newest_save():
             [int(i) for i in [f.replace(".", "")[:-4] for f in nameList if f.endswith('.json')] if i.isdigit()])
         Newest = [i for i in nameList if str(Newest)[-6:] == i[-11:-5]][0]
     # load vision data
-    return json.load(open(f"CalibrationOutPuts\\{Newest}", "r"))
+    return json.load(open(f"CalibrationOutPuts/{Newest}", "r"))
 
 
 def distance_angle_frame(img, min_color, max_color, blur_val, object_area):
