@@ -199,7 +199,7 @@ def get_vision_data(img, min_color, max_color, blur_val, object_area):
     height, width = frame_hsv.shape
 
     # find objects
-    contours, _ = cv2.findContours(frame_hsv, 1, 2)
+    _, contours, _ = cv2.findContours(frame_hsv, 1, 2)
 
     # find the object in rectangles and apply formulas
     frame_hsv = cv2.cvtColor(frame_hsv, cv2.COLOR_GRAY2RGB)
@@ -261,7 +261,7 @@ def main():
         # reads the frame from the camera
         # frame = cv2.imread(f"images/img {i}.png")
         _, frame = cap.read()
-        # frame = get_image(frame, rotation)
+        frame = get_image(frame, rotation)
         cv2.imshow("original", frame)
         # get the distance, angle and the edited frame
         #try:

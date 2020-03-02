@@ -42,9 +42,10 @@ def main():
         else:
             sd.putNumber('vel', 0)'''
         if angle is not None:
-            ser.write(str(angle))
+            print(str(angle).encode())
+            ser.write(str(angle).encode())
         else:
-            ser.write(str(0))
+            ser.write(str(0).encode())
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
 
