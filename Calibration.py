@@ -65,6 +65,7 @@ cv2.namedWindow("Angle")
 
 # img = cv2.imread('Tester2.jpg')
 cap = cv2.VideoCapture(0)
+cap.set(cv2.CAP_PROP_AUTO_EXPOSURE, 0)
 cap.set(15, -10)
 cap.set(cv2.CAP_PROP_FRAME_WIDTH, constants.WIDTH)
 cap.set(cv2.CAP_PROP_FRAME_HEIGHT, constants.HEIGHT)

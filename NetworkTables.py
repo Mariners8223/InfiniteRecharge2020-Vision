@@ -5,13 +5,14 @@ import numpy as np
 from networktables import NetworkTables
 import constants
 import serial
-
+import sys
 
 def main():
     # As a client to connect to a robot
-    ser = serial.Serial('/dev/ttyS0', 9600, timeout=1)
-    # NetworkTables.initialize(server='10.82.23.2')
-    # sd = NetworkTables.getTable('SmartDashboard')
+    #ser = serial.Serial('/dev/ttyS0', 9600, timeout=1)
+    while NetworkTables.initialize(server='10.82.23.2'):
+        print(NetworkTables.initialize(server='10.82.23.2'))
+    sd = NetworkTables.getTable('SmartDashboard')
 
     # load vision data
     data = processe.newest_save()
@@ -42,10 +43,13 @@ def main():
         else:
             sd.putNumber('vel', 0)'''
         if angle is not None:
-            print(str(angle).encode())
-            ser.write(str(angle).encode())
+            print(float(angle))
+            #ser.write(str(float(9)).encode())
+            #ser.write(str(float(angle)).encode())
+            sd.putNumber("ang", float(angle))
         else:
-            ser.write(str(0).encode())
+            #ser.write(str(0).encode())
+            sd.putNumber("ang", 0)
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
 
