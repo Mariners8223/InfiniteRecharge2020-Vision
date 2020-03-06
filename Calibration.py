@@ -6,7 +6,7 @@ import cv2
 from processe import get_center, get_image, get_rotation_matrix, newest_save, get_vision_data
 import constants
 import numpy as np
-
+import subprocess
 
 # mouse callback function
 def onClick(event, x, y, flags, param):
@@ -66,6 +66,7 @@ cv2.namedWindow("Angle")
 # img = cv2.imread('Tester2.jpg')
 cap = cv2.VideoCapture(0)
 cap.set(cv2.CAP_PROP_AUTO_EXPOSURE, 1)
+subprocess.call('sudo v4l2-ctl --set-ctrl=exposure_auto=1', shell=True)
 cap.set(cv2.CAP_PROP_FRAME_WIDTH, constants.WIDTH)
 cap.set(cv2.CAP_PROP_FRAME_HEIGHT, constants.HEIGHT)
 
@@ -100,7 +101,7 @@ cv2.createTrackbar("AngleY", "Angle", 0, 200, nothing)
 cv2.createTrackbar("AngleZ", "Angle", 0, 200, nothing)
 
 cv2.createTrackbar("Blur", "Bars", 3, 80, nothing)
-cv2.createTrackbar("Light(Neg)", "Bars", 0, 50, lambda x: print("use v4l2-ctl --set-ctrl=exposure_absolute=x"))
+cv2.createTrackbar("Light(Neg)", "Bars", 0, 50, lambda x: subprocess.call(f'sudo v4l2-ctl --set-ctrl=exposure_auto={x}', shell=True))
 
 # cv2.createTrackbar("SetAsMin", "set", 0, 1, setMax("Min"))
 # cv2.createTrackbar("SetAsMax", "set", 0, 1, setMax("Max"))
