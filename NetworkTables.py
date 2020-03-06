@@ -24,7 +24,8 @@ def main():
 
     # camera configuration
     cap = cv2.VideoCapture(0)
-    cap.set(15, light)
+    #cap.set(15, light)
+    cap.set(cv2.CAP_PROP_AUTO_EXPOSURE, 0.25)
     cap.set(cv2.CAP_PROP_FRAME_WIDTH, constants.WIDTH)
     cap.set(cv2.CAP_PROP_FRAME_HEIGHT, constants.HEIGHT)
 
@@ -34,22 +35,26 @@ def main():
         angle, distance, processed = processe.get_vision_data(frame, min_hsv, max_hsv, blur, constants.STICKER_AREA)
         cv2.imshow("before", frame)
         cv2.imshow("after", processed)
-        '''if distance is not None:
+        if distance is not None:
             velocity = processe.velocity(distance, 0.6)
             if velocity is not None:
                 sd.putNumber('vel', float(velocity))
+                print("velocity: " + str(velocity))
             else:
                 sd.putNumber('vel', 0)
+                print("velocity: " + str(0))
         else:
-            sd.putNumber('vel', 0)'''
+            sd.putNumber('vel', 0)
+            print("velocity: " + str(0))
         if angle is not None:
-            print(float(angle))
+            print("angle: " + str(angle))
             #ser.write(str(float(9)).encode())
             #ser.write(str(float(angle)).encode())
             sd.putNumber("ang", float(angle))
         else:
             #ser.write(str(0).encode())
             sd.putNumber("ang", 0)
+            print("angle: " + str(0))
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
 

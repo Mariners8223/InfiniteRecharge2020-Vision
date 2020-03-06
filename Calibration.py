@@ -36,13 +36,13 @@ def setMax(Max):
 # saves the setting
 def Save(x):
     if x == 1:
-        date = ''.join([i if i in string.digits else "." for i in str(datetime.now())])
+        #date = ''.join([i if i in string.digits else "." for i in str(datetime.now())])
 
         data["min"] = [int(i) for i in data["min"]]
         data["max"] = [int(i) for i in data["max"]]
         data["rotation"] = [float(i) for i in data["rotation"]]
         print(data)
-        with open(f'CalibrationOutPuts\\{date}.json', 'w') as outfile:
+        with open(f'CalibrationOutPuts/default.json', 'w') as outfile:
             json.dump(data, outfile)
         data["rotation"] = np.array(data["rotation"])
         data["min"] = np.array(data["min"])
@@ -65,8 +65,7 @@ cv2.namedWindow("Angle")
 
 # img = cv2.imread('Tester2.jpg')
 cap = cv2.VideoCapture(0)
-cap.set(cv2.CAP_PROP_AUTO_EXPOSURE, 0)
-cap.set(15, -10)
+cap.set(cv2.CAP_PROP_AUTO_EXPOSURE, 1)
 cap.set(cv2.CAP_PROP_FRAME_WIDTH, constants.WIDTH)
 cap.set(cv2.CAP_PROP_FRAME_HEIGHT, constants.HEIGHT)
 
@@ -101,7 +100,7 @@ cv2.createTrackbar("AngleY", "Angle", 0, 200, nothing)
 cv2.createTrackbar("AngleZ", "Angle", 0, 200, nothing)
 
 cv2.createTrackbar("Blur", "Bars", 3, 80, nothing)
-cv2.createTrackbar("Light(Neg)", "Bars", 0, 50, lambda x: cap.set(15, -x))
+cv2.createTrackbar("Light(Neg)", "Bars", 0, 50, lambda x: print("use v4l2-ctl --set-ctrl=exposure_absolute=x"))
 
 # cv2.createTrackbar("SetAsMin", "set", 0, 1, setMax("Min"))
 # cv2.createTrackbar("SetAsMax", "set", 0, 1, setMax("Max"))
@@ -130,7 +129,6 @@ def main():
         # get img
         global img
         _, img = cap.read()
-
         #img = cv2.imread(f"imgs\\Tower{i+147}.png")
         i += 1
         i = (i) % (1000-147)
@@ -140,7 +138,7 @@ def main():
         data["max"] = np.array([cv2.getTrackbarPos("MaxH", "Bars"), cv2.getTrackbarPos("MaxS", "Bars"),
                                 cv2.getTrackbarPos("MaxV", "Bars")])
         data["blur"] = cv2.getTrackbarPos("Blur", "Bars")
-        data["light"] = -cv2.getTrackbarPos("Light(Neg)", "Bars")
+        data["light"] = cv2.getTrackbarPos("Light(Neg)", "Bars")
         data["rotation"] = np.array([(cv2.getTrackbarPos("AngleX", "Angle") - 100) / 100000,
                                      (cv2.getTrackbarPos("AngleY", "Angle") - 100) / 100000,
                                      ((cv2.getTrackbarPos("AngleZ", "Angle") - 100) * (np.pi / 4)) / 100])
@@ -155,7 +153,6 @@ def main():
         if data["blur"] < 3:
             data["blur"] = 3
             cv2.setTrackbarPos("Blur", "Bars", data["blur"])
-
         a, d, frame_edited = get_vision_data(imgR, data["min"], data["max"], data["blur"], constants.STICKER_AREA)
 
         # show the original, edited, hsv and bars
