@@ -6,6 +6,7 @@ from networktables import NetworkTables
 import constants
 import serial
 import sys
+import subprocess
 
 def main():
     # As a client to connect to a robot
@@ -24,6 +25,8 @@ def main():
 
     # camera configuration
     cap = cv2.VideoCapture(0)
+    subprocess.call('sudo v4l2-ctl --set-ctrl=exposure_auto=1', shell=True)
+    subprocess.call(f'sudo v4l2-ctl --set-ctrl=exposure_auto={light}', shell=True)
     cap.set(cv2.CAP_PROP_FRAME_WIDTH, constants.WIDTH)
     cap.set(cv2.CAP_PROP_FRAME_HEIGHT, constants.HEIGHT)
 
@@ -52,7 +55,7 @@ def main():
         else:
             print("angle: " + str(0))
             sd.putNumber("ang", 0)
-            #ser.write(str(0).encode())
+            #ser.write(str(float(0)).encode())
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
 
