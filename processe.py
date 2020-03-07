@@ -193,8 +193,10 @@ def get_vision_data(img, min_color, max_color, blur_val, object_area):
     frame_hsv = cv2.cvtColor(img, cv2.COLOR_RGB2HSV)
     # threshold
     frame_hsv = cv2.inRange(frame_hsv, min_color, max_color)
-    # blur
+
     frame_hsv = cv2.medianBlur(frame_hsv, blur_val)
+
+    frame_hsv = cv2.dilate(frame_hsv, np.ones((5,5), np.uint8), iterations=1)
 
     height, width = frame_hsv.shape
 
@@ -253,21 +255,21 @@ def main():
     rotation = get_rotation_matrix(np.array(data["rotation"]))
     # camera configuration
     cap = cv2.VideoCapture(0)
-    cap.set(15, light)
-    cap.set(cv2.CAP_PROP_FRAME_WIDTH, constants.WIDTH)
-    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, constants.HEIGHT)
+    #cap.set(15, light)
+    #cap.set(cv2.CAP_PROP_FRAME_WIDTH, constants.WIDTH)
+    #cap.set(cv2.CAP_PROP_FRAME_HEIGHT, constants.HEIGHT)
     i = 0
     while True:
         # reads the frame from the camera
         # frame = cv2.imread(f"images/img {i}.png")
         _, frame = cap.read()
-        frame = get_image(frame, rotation)
+        #frame = get_image(frame, rotation)
         cv2.imshow("original", frame)
         # get the distance, angle and the edited frame
         #try:
-        D, angle, frame_edited_D_A = get_vision_data(frame, min_hsv, max_hsv, blur, constants.STICKER_AREA)
+        #D, angle, frame_edited_D_A = get_vision_data(frame, min_hsv, max_hsv, blur, constants.STICKER_AREA)
         # show the original and edited images
-        cv2.imshow("processed", frame_edited_D_A)
+        #cv2.imshow("processed", frame_edited_D_A)
         #except:
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
