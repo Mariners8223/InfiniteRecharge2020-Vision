@@ -199,7 +199,7 @@ def get_vision_data(img, min_color, max_color, blur_val, object_area):
     height, width = frame_hsv.shape
 
     # find objects
-    contours, _ = cv2.findContours(frame_hsv, 1, 2)
+    _, contours, _ = cv2.findContours(frame_hsv, 1, 2)
 
     # find the object in rectangles and apply formulas
     frame_hsv = cv2.cvtColor(frame_hsv, cv2.COLOR_GRAY2RGB)

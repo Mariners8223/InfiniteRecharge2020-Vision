@@ -26,7 +26,7 @@ def main():
     # camera configuration
     cap = cv2.VideoCapture(0)
     subprocess.call('sudo v4l2-ctl --set-ctrl=exposure_auto=1', shell=True)
-    subprocess.call(f'sudo v4l2-ctl --set-ctrl=exposure_auto={light}', shell=True)
+    subprocess.call(f'sudo v4l2-ctl --set-ctrl=exposure_absolute={light}', shell=True)
     cap.set(cv2.CAP_PROP_FRAME_WIDTH, constants.WIDTH)
     cap.set(cv2.CAP_PROP_FRAME_HEIGHT, constants.HEIGHT)
 

@@ -101,7 +101,7 @@ cv2.createTrackbar("AngleY", "Angle", 0, 200, nothing)
 cv2.createTrackbar("AngleZ", "Angle", 0, 200, nothing)
 
 cv2.createTrackbar("Blur", "Bars", 3, 80, nothing)
-cv2.createTrackbar("Light(Neg)", "Bars", 0, 50, lambda x: subprocess.call(f'sudo v4l2-ctl --set-ctrl=exposure_auto={x}', shell=True))
+cv2.createTrackbar("Light(Neg)", "Bars", 0, 50, lambda x: subprocess.call(f'sudo v4l2-ctl --set-ctrl=exposure_absolute={x}', shell=True))
 
 # cv2.createTrackbar("SetAsMin", "set", 0, 1, setMax("Min"))
 # cv2.createTrackbar("SetAsMax", "set", 0, 1, setMax("Max"))
